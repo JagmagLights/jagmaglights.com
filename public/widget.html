@@ -1,31 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jagmag AI Chat</title>
-  <style>
-    body, html { margin:0; padding:0; height:100%; }
-    #assistant-root { width:100%; height:100%; }
-    #inner-close {
-      position:absolute; top:8px; right:8px;
-      background:transparent; border:none;
-      font-size:1.5rem; cursor:pointer;
-    }
-  </style>
-</head>
-<body>
-  <button id="inner-close" onclick="window.parent.postMessage('MINIMIZE_CHAT','*')">&times;</button>
+<!-- public/widget.html -->
+<!DOCTYPE html><html><head><meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Jagmag Chat</title>
+<style>body,html{margin:0;height:100%}#assistant-root{width:100%;height:100%;}
+#inner-close{position:absolute;top:8px;right:8px;background:transparent;border:none;font-size:1.5rem;cursor:pointer;}
+</style></head><body>
+  <button id="inner-close"
+          onclick="window.parent.postMessage('MINIMIZE_CHAT','*')">&times;</button>
   <div id="assistant-root"></div>
-
-  <!-- Load the Assistants embed library -->
   <script src="https://cdn.jsdelivr.net/npm/@openai/assistants-js@latest"></script>
   <script>
     Assistants.embed({
-      assistantId: "asst_L4plcsTUXegliBe0CNoFUfI3",
-      projectKey: "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",
-      targetElement: document.getElementById("assistant-root")
+      assistantId: process.env.ASSISTANT_ID,
+      projectKey: process.env.OPENAI_API_KEY,
+      targetElement: document.getElementById('assistant-root')
     });
   </script>
-</body>
-</html>
+</body></html>
