@@ -1,0 +1,11 @@
+// server.js (Node/Express)
+const express = require('express');
+const path = require('path');
+const app = express();
+
+// Serve widget UI
+app.get('/chat-widget', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'widget.html'));
+});
+
+// ... existing /chat API routes, etc.
