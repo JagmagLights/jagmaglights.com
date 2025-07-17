@@ -17,11 +17,13 @@
 <body>
   <button id="inner-close" onclick="window.parent.postMessage('MINIMIZE_CHAT','*')">&times;</button>
   <div id="assistant-root"></div>
+
+  <!-- Load the Assistants embed library -->
   <script src="https://cdn.jsdelivr.net/npm/@openai/assistants-js@latest"></script>
   <script>
     Assistants.embed({
       assistantId: "asst_L4plcsTUXegliBe0CNoFUfI3",
-    
+      projectKey: "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",
       targetElement: document.getElementById("assistant-root")
     });
   </script>
