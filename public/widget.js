@@ -1,63 +1,121 @@
-(() => {
-  const bubble = document.createElement("div");
-  bubble.style = `
-    position: fixed; bottom: 24px; right: 24px;
-    width: 56px; height: 56px; border-radius: 50%;
-    background: #FFC000; cursor: pointer; z-index:9999;
-    display:flex; align-items:center; justify-content:center;
-    box-shadow:0 2px 8px rgba(0,0,0,0.2);
-  `;
-  bubble.innerHTML = `<svg width="24" height="24"><circle cx="12" cy="12" r="10" fill="white"/></svg>`;
-  document.body.appendChild(bubble);
 
-  const chatBox = document.createElement("div");
-  chatBox.style = `
-    position: fixed; bottom: 90px; right: 24px;
-    width: 320px; max-height: 400px; background: white;
-    border-radius: 8px; box-shadow:0 2px 12px rgba(0,0,0,0.2);
-    display:none; flex-direction:column; overflow:hidden; z-index:9999;
-  `;
-  chatBox.innerHTML = `
-    <div style="padding:12px; background:#FFC000; color:#000; font-weight:bold;">
-      Jagmag Bot
-    </div>
-    <div id="jagmag-messages" style="flex:1; padding:12px; overflow:auto;"></div>
-    <div style="display:flex; border-top:1px solid #eee;">
-      <input id="jagmag-input" style="flex:1; border:none; padding:8px;" placeholder="Type a message..." />
-      <button id="jagmag-send" style="border:none; padding:8px 12px; background:#FFC000; cursor:pointer;">
-        Send
-      </button>
-    </div>`;
-  document.body.appendChild(chatBox);
-
-  bubble.onclick = () => {
-    bubble.style.display = "none";
-    chatBox.style.display = "flex";
-    addMessage("bot", "Hi 👋 I’m Jagmag Bot. How can I help you with lighting today?");
-  };
-  document.getElementById("jagmag-send").onclick = async () => {
-    const input = document.getElementById("jagmag-input");
-    const text = input.value.trim();
-    if (!text) return;
-    addMessage("user", text);
-    input.value = "";
-    const res = await fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
-    });
-    const data = await res.json();
-    addMessage("bot", data.reply || "Sorry, something went wrong.");
-  };
-
-  function addMessage(sender, text) {
-    const container = document.getElementById("jagmag-messages");
-    const msg = document.createElement("div");
-    msg.style = sender === "bot"
-      ? "margin:8px 0; text-align:left;"
-      : "margin:8px 0; text-align:right;";
-    msg.textContent = text;
-    container.appendChild(msg);
-    container.scrollTop = container.scrollHeight;
+<style>
+  #jagmag-launcher {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 9999;
   }
-})();
+
+  .jagmag-bubble {
+    background-color: #ffffff;
+    border: 2px solid #F1CF54;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+
+  .jagmag-bubble img {
+    width: 32px;
+    height: 32px;
+  }
+
+  .jagmag-options {
+    position: absolute;
+    bottom: 70px;
+    right: 0;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+  }
+
+  .jagmag-options a {
+    display: flex;
+    align-items: center;
+    background-color: #FAFAFA;
+    color: #000;
+    padding: 8px 12px;
+    border-radius: 12px;
+    text-decoration: none;
+    font-family: "Poppins", sans-serif;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.2s ease;
+  }
+
+  .jagmag-options a img {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+  }
+
+  #jagmag-chat-frame {
+    position: fixed;
+    bottom: 100px;
+    right: 24px;
+    width: 360px;
+    height: 500px;
+    border-radius: 16px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.25);
+    display: none;
+    z-index: 9999;
+  }
+
+  #jagmag-minimize {
+    position: absolute;
+    top: 10px;
+    right: 16px;
+    font-size: 1rem;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #000;
+  }
+</style>
+
+<div id="jagmag-launcher">
+  <div class="jagmag-options" id="jagmag-options">
+    <a href="https://wa.me/917251000007?text=Hi+Jagmag+Lights" target="_blank">
+      <img src="https://cdn.shopify.com/s/files/1/0876/6137/9869/files/Whatsapp_SVG.svg?v=1722281734" alt="WhatsApp"> WhatsApp
+    </a>
+    <a href="javascript:void(0);" onclick="toggleJagmagChat()">
+      <img src="https://cdn.shopify.com/s/files/1/0876/6137/9869/files/Ai-chatbot.png?v=1752777342" alt="Chatbot"> Chat with AI
+    </a>
+  </div>
+  <div class="jagmag-bubble" onclick="toggleJagmagOptions()">
+    <img src="https://cdn.shopify.com/s/files/1/0876/6137/9869/files/Ai-chatbot.png?v=1752777342" alt="Assistant">
+  </div>
+</div>
+
+<iframe
+  id="jagmag-chat-frame"
+  src="https://jagmaglights-com.vercel.app/"
+  frameborder="0"
+></iframe>
+
+<script>
+  const options = document.getElementById("jagmag-options");
+  const frame = document.getElementById("jagmag-chat-frame");
+
+  function toggleJagmagOptions() {
+    options.style.display = options.style.display === "flex" ? "none" : "flex";
+  }
+
+  function toggleJagmagChat() {
+    frame.style.display = "block";
+    options.style.display = "none";
+  }
+
+  document.addEventListener("click", (e) => {
+    if (e.target.id === "jagmag-minimize") {
+      frame.style.display = "none";
+    }
+  });
+</script>
+
