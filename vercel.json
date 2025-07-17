@@ -1,10 +1,10 @@
 {
-  "version": 2,
   "builds": [
     { "src": "server.js", "use": "@vercel/node" },
     { "src": "public/**", "use": "@vercel/static" }
   ],
   "routes": [
+    { "src": "/chat-widget", "dest": "/server.js" },
     { "src": "/widget.html", "dest": "/public/widget.html" },
     { "src": "/(.*)", "dest": "/server.js" }
   ]
